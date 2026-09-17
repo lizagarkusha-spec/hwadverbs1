@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Adverb Works — майстерня прислівників</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF3FA;
+    --card:#FFFFFF;
+    --ink:#0E2A47;
+    --ink-soft:#4A6684;
+    --line:#C3D8EE;
+    --cobalt:#1A5BC4;
+    --cobalt-dark:#134494;
+    --sky:#8FBDEB;
+    --wash:#DCEAF8;
+    --ok:#127A5E;
+    --ok-wash:#DFF2EB;
+    --no:#B23B25;
+    --no-wash:#FBE6E1;
+    --amber:#C97A11;
+    --sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    --mono:"IBM Plex Mono","Courier New",monospace;
+    --display:"Unbounded","IBM Plex Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(to right, rgba(143,189,235,.22) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(143,189,235,.22) 1px, transparent 1px);
+    background-size:28px 28px;
+    line-height:1.55;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:740px;margin:0 auto;padding:0 16px 72px}
+
+  /* ---------- top bar ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:var(--ink);
+    color:#fff;
+    border-bottom:3px solid var(--cobalt);
+  }
+  .bar{max-width:740px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+  .logo{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.02em;line-height:1.1}
+  .logo span{display:block;font-family:var(--sans);font-weight:400;font-size:11px;color:var(--sky);letter-spacing:.04em}
+  .bar-spacer{flex:1}
+  .tool{
+    background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);
+    border-radius:4px;padding:6px 10px;font:500 12px var(--sans);cursor:pointer;
+  }
+  .tool:hover{background:rgba(255,255,255,.12)}
+  .score{font:500 12px var(--mono);color:var(--sky);white-space:nowrap}
+
+  /* ---------- ruler progress ---------- */
+  .ruler{height:16px;background:#fff;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  .ruler-fill{position:absolute;left:0;top:0;bottom:0;background:var(--wash);width:0;transition:width .35s ease}
+  .ruler-ticks{position:absolute;inset:0;display:flex}
+  .ruler-ticks i{flex:1;border-right:1px solid var(--line);opacity:.7}
+  .ruler-ticks i:last-child{border-right:0}
+
+  /* ---------- screens ---------- */
+  .screen{display:none;padding-top:26px;animation:in .25s ease both}
+  .screen.on{display:block}
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none}*{transition:none!important}}
+
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,7vw,42px);line-height:1.05;margin:0 0 10px}
+  h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0 0 10px;line-height:1.2}
+  h3{font-size:15px;margin:22px 0 8px;color:var(--ink)}
+  p{margin:0 0 12px}
+  .lead{font-size:17px;color:var(--ink-soft);max-width:56ch}
+
+  .sheet{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:22px;box-shadow:0 1px 0 var(--line);
+  }
+  .sheet + .sheet{margin-top:14px}
+
+  .btn{
+    display:inline-block;background:var(--cobalt);color:#fff;border:0;border-radius:6px;
+    padding:13px 22px;font:600 15px var(--sans);cursor:pointer;
+  }
+  .btn:hover{background:var(--cobalt-dark)}
+  .btn:disabled{background:var(--sky);cursor:default}
+  .btn.ghost{background:#fff;color:var(--cobalt);border:1px solid var(--cobalt)}
+  .btn.ghost:hover{background:var(--wash)}
+  .btn.small{padding:9px 14px;font-size:13px}
+  button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,.slot:focus-visible,.tile:focus-visible{
+    outline:3px solid var(--amber);outline-offset:2px}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .mt{margin-top:18px}
+
+  /* ---------- rules ---------- */
+  .rule-nav{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .rule-nav button{
+    border:1px solid var(--line);background:#fff;color:var(--ink-soft);
+    border-radius:20px;padding:6px 13px;font:500 13px var(--sans);cursor:pointer;
+  }
+  .rule-nav button.active{background:var(--ink);border-color:var(--ink);color:#fff}
+  .slide{display:none}
+  .slide.on{display:block}
+  .formula{font-family:var(--mono);font-size:14px;background:var(--wash);border-radius:5px;padding:2px 7px;display:inline-block}
+  table.rules{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 14px}
+  table.rules td{border-bottom:1px solid var(--line);padding:9px 6px;vertical-align:top}
+  table.rules td:first-child{width:38%;font-family:var(--mono);color:var(--cobalt-dark);white-space:nowrap}
+  .en{font-weight:600}
+  .ua-note{color:var(--ink-soft);font-size:13px}
+  ul.clean{margin:0 0 14px;padding-left:18px}
+  ul.clean li{margin-bottom:7px}
+  .warn{border-left:4px solid var(--amber);background:#FDF5E7;padding:12px 14px;border-radius:0 6px 6px 0;font-size:14px;margin:6px 0 14px}
+  .warn b{color:var(--amber)}
+
+  /* ---------- hub ---------- */
+  .stage-card{
+    display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);
+    border-radius:8px;padding:14px 16px;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;
+    font:inherit;color:inherit;
+  }
+  .stage-card:hover{border-color:var(--cobalt);background:#FAFCFF}
+  .stage-card .num{
+    font-family:var(--mono);font-size:13px;color:#fff;background:var(--ink);
+    width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;
+  }
+  .stage-card.done .num{background:var(--ok)}
+  .stage-card .t{flex:1}
+  .stage-card .t b{display:block;font-size:15px}
+  .stage-card .t small{color:var(--ink-soft);font-size:13px}
+  .stage-card .st{font:500 12px var(--mono);color:var(--ink-soft);white-space:nowrap}
+  .stage-card.done .st{color:var(--ok)}
+
+  /* ---------- task ---------- */
+  .task-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;font-size:13px;color:var(--ink-soft)}
+  .task-head b{font-family:var(--mono);font-weight:500}
+  .prompt{font-size:15px;color:var(--ink-soft);margin-bottom:12px}
+  .target{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:var(--wash);border-radius:8px;padding:14px 16px;margin-bottom:14px;
+  }
+  .target .word{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--cobalt-dark)}
+  .target .pos{font-size:12px;color:var(--ink-soft);border:1px solid var(--sky);border-radius:20px;padding:2px 9px}
+  .target .ua{font-size:14px;color:var(--ink-soft);width:100%}
+  .sent{font-size:18px;line-height:1.8;margin-bottom:16px}
+  .gap{font-family:var(--mono);color:var(--cobalt);border-bottom:2px solid var(--sky);padding:0 22px}
+
+  input[type=text]{
+    width:100%;font:500 18px var(--mono);padding:13px 14px;border:1px solid var(--line);
+    border-radius:6px;background:#fff;color:var(--ink);
+  }
+  input[type=text]:focus{border-color:var(--cobalt);outline:none;box-shadow:0 0 0 3px var(--wash)}
+  textarea{
+    width:100%;min-height:120px;font:400 15px var(--sans);padding:12px 14px;
+    border:1px solid var(--line);border-radius:6px;resize:vertical;color:var(--ink);
+  }
+  textarea:focus{border-color:var(--cobalt);outline:none}
+
+  .opts{display:grid;gap:8px}
+  .opt{
+    border:1px solid var(--line);background:#fff;border-radius:6px;padding:13px 15px;
+    font:500 16px var(--sans);text-align:left;cursor:pointer;color:var(--ink);
+  }
+  .opt:hover:not(:disabled){border-color:var(--cobalt);background:#FAFCFF}
+  .opt:disabled{cursor:default}
+  .opt.pick-ok{border-color:var(--ok);background:var(--ok-wash)}
+  .opt.pick-no{border-color:var(--no);background:var(--no-wash)}
+
+  /* slots */
+  .slotline{font-size:17px;line-height:2.4;margin-bottom:16px}
+  .slot{
+    display:inline-block;width:26px;height:26px;margin:0 2px;vertical-align:middle;
+    border:1px dashed var(--sky);border-radius:4px;background:#fff;cursor:pointer;
+    font:500 15px var(--mono);color:var(--cobalt);padding:0;line-height:24px;
+  }
+  .slot:hover:not(:disabled){background:var(--wash);border-color:var(--cobalt)}
+  .slot.filled{width:auto;padding:0 10px;border-style:solid;background:var(--wash)}
+  .slot.ok{border-color:var(--ok);background:var(--ok-wash);color:var(--ok)}
+  .slot.no{border-color:var(--no);background:var(--no-wash);color:var(--no)}
+  .slot:disabled{cursor:default}
+
+  /* tiles */
+  .answer-line{
+    min-height:56px;border:1px solid var(--line);border-bottom:2px solid var(--sky);
+    border-radius:6px;background:#fff;padding:10px;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;
+  }
+  .answer-line:empty::after{content:"Натискай на слова знизу";color:var(--sky);font-size:14px}
+  .tiles{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+  .tile{
+    border:1px solid var(--line);background:#fff;border-radius:5px;padding:8px 12px;
+    font:500 16px var(--sans);cursor:pointer;color:var(--ink);
+  }
+  .tile:hover:not(:disabled){border-color:var(--cobalt);background:var(--wash)}
+  .tile.used{opacity:.3;pointer-events:none}
+  .tile.in-answer{background:var(--wash);border-color:var(--sky)}
+
+  /* feedback */
+  .fb{border-radius:8px;padding:14px 16px;margin-top:14px;font-size:15px;display:none}
+  .fb.on{display:block}
+  .fb.good{background:var(--ok-wash);border:1px solid #A9DCCB}
+  .fb.bad{background:var(--no-wash);border:1px solid #F0C3B8}
+  .fb .verdict{font-weight:600;margin-bottom:4px}
+  .fb.good .verdict{color:var(--ok)}
+  .fb.bad .verdict{color:var(--no)}
+  .fb code{font-family:var(--mono);background:#fff;border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+
+  .speak{
+    border:1px solid var(--line);background:#fff;border-radius:50%;width:32px;height:32px;
+    cursor:pointer;font-size:15px;line-height:1;color:var(--cobalt);
+  }
+  .speak:hover{background:var(--wash)}
+
+  .hint-btn{background:none;border:0;color:var(--cobalt);font:500 13px var(--sans);cursor:pointer;padding:0;text-decoration:underline}
+  .hint-box{display:none;margin-top:10px;font-size:14px;color:var(--ink-soft);border-left:3px solid var(--sky);padding-left:12px}
+  .hint-box.on{display:block}
+
+  /* results */
+  .big-score{font-family:var(--display);font-size:46px;font-weight:600;line-height:1}
+  .miss{border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin-bottom:8px;font-size:14px;background:#fff}
+  .miss b{font-family:var(--mono);color:var(--cobalt-dark)}
+
+  /* drawer */
+  .drawer{
+    position:fixed;inset:0;background:rgba(14,42,71,.45);z-index:60;display:none;
+  }
+  .drawer.on{display:block}
+  .drawer-inner{
+    position:absolute;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--paper);
+    overflow-y:auto;padding:18px 18px 60px;border-left:3px solid var(--cobalt);
+  }
+  .drawer-close{position:sticky;top:0;display:flex;justify-content:flex-end;margin-bottom:6px}
+
+  .toast{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:80;
+    background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;
+    opacity:0;pointer-events:none;transition:opacity .3s
+  }
+  .toast.on{opacity:1}
+  .footnote{font-size:12px;color:var(--ink-soft);margin-top:26px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">ADVERB WORKS<span>майстерня прислівників</span></div>
+    <div class="bar-spacer"></div>
+    <div class="score" id="scoreBox">0 балів</div>
+    <button class="tool" id="rulesBtn">Правила</button>
+    <button class="tool" id="homeBtn">Мапа</button>
+  </div>
+  <div class="ruler"><div class="ruler-fill" id="rulerFill"></div><div class="ruler-ticks" id="rulerTicks"></div></div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen on" id="scr-intro">
+    <h1>Прислівники<br>без паніки</h1>
+    <p class="lead">П'ять етапів: спочатку вчимося робити прислівники зі складних слів, потім ставимо їх на правильне місце в реченні, а наприкінці пишемо свої речення.</p>
+    <div class="sheet mt">
+      <h2>Перед стартом</h2>
+      <p>Прочитай правила — вони написані простими словами і завжди доступні через кнопку «Правила» вгорі.</p>
+      <div class="row">
+        <button class="btn" id="toRules">Читати правила</button>
+        <button class="btn ghost" id="skipRules">Одразу до завдань</button>
+      </div>
+    </div>
+    <p class="footnote">Прогрес зберігається автоматично. Можеш закрити вкладку й повернутися пізніше.</p>
+  </section>
+
+  <!-- ============ RULES ============ -->
+  <section class="screen" id="scr-rules">
+    <h2>Правила</h2>
+    <div class="rule-nav" id="ruleNav"></div>
+    <div class="sheet" id="ruleBody"></div>
+    <div class="row mt">
+      <button class="btn ghost small" id="rulePrev">← Назад</button>
+      <button class="btn small" id="ruleNext">Далі →</button>
+      <button class="btn small" id="rulesDone" style="display:none">До завдань</button>
+    </div>
+  </section>
+
+  <!-- ============ HUB ============ -->
+  <section class="screen" id="scr-hub">
+    <h2>Мапа етапів</h2>
+    <p class="lead" style="font-size:15px">Проходь по порядку — кожен наступний етап спирається на попередній.</p>
+    <div id="hubList" class="mt"></div>
+    <div class="sheet mt">
+      <h3 style="margin-top:0">Твій прогрес</h3>
+      <p id="hubStats" style="margin:0;font-size:14px;color:var(--ink-soft)"></p>
+      <button class="btn ghost small mt" id="resetBtn">Почати все спочатку</button>
+    </div>
+  </section>
+
+  <!-- ============ TASK ============ -->
+  <section class="screen" id="scr-task">
+    <div class="task-head">
+      <span id="taskStage"></span>
+      <b id="taskCount"></b>
+    </div>
+    <div class="sheet" id="taskBody"></div>
+    <div class="fb" id="fb"></div>
+    <div class="row mt">
+      <button class="btn" id="checkBtn">Перевірити</button>
+      <button class="btn" id="nextBtn" style="display:none">Далі →</button>
+      <button class="btn ghost small" id="quitBtn">До мапи</button>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="screen" id="scr-result">
+    <div class="sheet">
+      <div class="big-score" id="resScore"></div>
+      <p id="resText" class="lead" style="font-size:15px"></p>
+      <div id="resMiss"></div>
+      <div class="row mt">
+        <button class="btn" id="retryMiss" style="display:none">Повторити промахи</button>
+        <button class="btn ghost" id="resHome">До мапи</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="drawer" id="drawer"><div class="drawer-inner">
+  <div class="drawer-close"><button class="btn ghost small" id="drawerClose">Закрити ✕</button></div>
+  <h2>Правила</h2>
+  <div class="rule-nav" id="dRuleNav"></div>
+  <div class="sheet" id="dRuleBody"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   1. ДАНІ
+   ===================================================================== */
+
+var RULES = [
+  {
+    title: "Що це таке",
+    html:
+      "<p><b>Прикметник</b> (adjective) описує <b>річ або людину</b>. <b>Прислівник</b> (adverb) описує <b>дію</b>, інший прикметник або все речення.</p>" +
+      "<table class='rules'>" +
+      "<tr><td>adjective → іменник</td><td><span class='en'>a merciless boss</span><br><span class='ua-note'>безжальний начальник (який він?)</span></td></tr>" +
+      "<tr><td>adverb → дієслово</td><td><span class='en'>he fired them mercilessly</span><br><span class='ua-note'>звільнив їх безжально (як він це зробив?)</span></td></tr>" +
+      "<tr><td>adverb → прикметник</td><td><span class='en'>an extraordinarily difficult exam</span><br><span class='ua-note'>надзвичайно складний іспит (наскільки складний?)</span></td></tr>" +
+      "<tr><td>adverb → все речення</td><td><span class='en'>Honestly, I forgot.</span><br><span class='ua-note'>Чесно кажучи, я забув.</span></td></tr>" +
+      "</table>" +
+      "<p>Прислівник відповідає на питання: <span class='formula'>How? When? Where? How often? How much?</span></p>" +
+      "<p class='ua-note'>Навіщо він потрібен: «He spoke» — просто факт. «He spoke bluntly» — ти вже бачиш людину. Прислівник додає точності й емоції, і саме його бракує в мові на рівні B2.</p>"
+  },
+  {
+    title: "Як зробити",
+    html:
+      "<p>Базове правило: <span class='formula'>adjective + ly</span>. Але є шість типових ситуацій із написанням.</p>" +
+      "<table class='rules'>" +
+      "<tr><td>+ ly</td><td><span class='en'>sudden → suddenly</span>, <span class='en'>vehement → vehemently</span></td></tr>" +
+      "<tr><td>-y → -ily</td><td><span class='en'>clumsy → clumsily</span>, <span class='en'>angry → angrily</span></td></tr>" +
+      "<tr><td>-le → -ly</td><td><span class='en'>subtle → subtly</span>, <span class='en'>humble → humbly</span>, <span class='en'>gentle → gently</span></td></tr>" +
+      "<tr><td>-ic → -ically</td><td><span class='en'>frantic → frantically</span>, <span class='en'>dramatic → dramatically</span><br><span class='ua-note'>виняток: public → publicly</span></td></tr>" +
+      "<tr><td>-ue → -uly</td><td><span class='en'>true → truly</span>, <span class='en'>due → duly</span><br><span class='ua-note'>а ще whole → wholly</span></td></tr>" +
+      "<tr><td>без змін</td><td><span class='en'>fast, hard, late, early, straight, high</span><br><span class='ua-note'>good → well (повністю інше слово)</span></td></tr>" +
+      "</table>" +
+      "<div class='warn'><b>Увага:</b> не кожне слово на -ly є прислівником. <span class='en'>friendly, lovely, silly, lonely</span> — це прикметники. Не можна сказати «he smiled friendly».</div>"
+  },
+  {
+    title: "Від іменника",
+    html:
+      "<p>З іменника не можна одразу зробити прислівник. Спочатку робимо <b>прикметник</b>, і вже з нього — прислівник. Це і є ланцюжок, який треба вміти будувати.</p>" +
+      "<table class='rules'>" +
+      "<tr><td>mercy</td><td><span class='en'>mercy → merciful → mercifully</span><br><span class='en'>mercy → merciless → mercilessly</span><br><span class='ua-note'>милосердно / безжально — суфікс міняє сенс на протилежний</span></td></tr>" +
+      "<tr><td>envy</td><td><span class='en'>envy → envious → enviously</span><br><span class='ua-note'>заздрісно</span></td></tr>" +
+      "<tr><td>instinct</td><td><span class='en'>instinct → instinctive → instinctively</span><br><span class='ua-note'>інстинктивно</span></td></tr>" +
+      "<tr><td>grudge</td><td><span class='en'>grudge → grudging → grudgingly</span><br><span class='ua-note'>неохоче</span></td></tr>" +
+      "</table>" +
+      "<p>Корисні суфікси прикметників: <span class='formula'>-ful</span> (є щось), <span class='formula'>-less</span> (немає нічого), <span class='formula'>-ous</span>, <span class='formula'>-ive</span>, <span class='formula'>-ic</span>, <span class='formula'>-al</span>.</p>"
+  },
+  {
+    title: "Де він стоїть",
+    html:
+      "<p>Місце залежить від типу прислівника. Ось чотири робочі правила.</p>" +
+      "<table class='rules'>" +
+      "<tr><td>manner (як?)</td><td>після дієслова або після додатка<br><span class='en'>She explained the rules patiently.</span></td></tr>" +
+      "<tr><td>frequency, probability</td><td>перед смисловим дієсловом, але <b>після</b> be та після допоміжного<br><span class='en'>He rarely complains. / He is always late. / I have never tried it.</span></td></tr>" +
+      "<tr><td>time, place (коли? де?)</td><td>у кінці речення (місце → час)<br><span class='en'>She arrived at the office late.</span></td></tr>" +
+      "<tr><td>degree (наскільки?)</td><td>прямо перед словом, яке описує<br><span class='en'>extremely difficult, incredibly quickly</span></td></tr>" +
+      "</table>" +
+      "<div class='warn'><b>Головна заборона:</b> прислівник не можна ставити між дієсловом і додатком.<br>✗ <span class='en'>She speaks fluently Italian.</span> → ✓ <span class='en'>She speaks Italian fluently.</span></div>" +
+      "<p class='ua-note'>Коментар до всього речення (Honestly, Apparently, Unfortunately) ставимо на початок і відділяємо комою.</p>"
+  },
+  {
+    title: "Пастки",
+    html:
+      "<p>Деякі слова мають <b>дві</b> форми прислівника — і значення в них різні. Це улюблене місце помилок на B2.</p>" +
+      "<table class='rules'>" +
+      "<tr><td>hard / hardly</td><td><span class='en'>work hard</span> — важко працювати<br><span class='en'>hardly work</span> — майже не працювати</td></tr>" +
+      "<tr><td>late / lately</td><td><span class='en'>arrive late</span> — пізно<br><span class='en'>lately</span> — останнім часом</td></tr>" +
+      "<tr><td>near / nearly</td><td><span class='en'>stand near</span> — близько<br><span class='en'>nearly empty</span> — майже</td></tr>" +
+      "<tr><td>high / highly</td><td><span class='en'>fly high</span> — високо<br><span class='en'>highly respected</span> — дуже, надзвичайно</td></tr>" +
+      "<tr><td>deep / deeply</td><td><span class='en'>dig deep</span> — глибоко (фізично)<br><span class='en'>deeply moved</span> — глибоко (емоційно)</td></tr>" +
+      "<tr><td>short / shortly</td><td><span class='en'>stop short</span> — різко<br><span class='en'>shortly</span> — незабаром</td></tr>" +
+      "<tr><td>bare / barely</td><td><span class='en'>bare</span> — голий (прикметник)<br><span class='en'>barely</span> — ледве</td></tr>" +
+      "</table>" +
+      "<div class='warn'><b>Ще одне:</b> після дієслів відчуття (look, smell, taste, sound, feel, seem) ставимо <b>прикметник</b>, а не прислівник.<br>✓ <span class='en'>It smells good.</span> ✗ <span class='en'>It smells well.</span><br>Але: <span class='en'>She plays the guitar well.</span> — тут звичайна дія.</div>"
+  }
+];
+
+/* --- Етап 1: утворення --- */
+var FORGE = [
+  {base:"mercy", pos:"іменник", ua:"безжально, без жодного жалю",
+   sentence:"The critics attacked the young director ___.",
+   answers:["mercilessly"], chain:"mercy → merciless → mercilessly",
+   note:"Від іменника спершу робимо прикметник: -less = «без чогось»."},
+  {base:"grudge", pos:"іменник", ua:"неохоче, знехотя",
+   sentence:"He ___ admitted that I had been right all along.",
+   answers:["grudgingly"], chain:"grudge → grudging → grudgingly",
+   note:"Ланцюжок через прикметник на -ing."},
+  {base:"subtle", pos:"прикметник", ua:"ледь помітно",
+   sentence:"The colours change ___ as the sun goes down.",
+   answers:["subtly"], chain:"subtle → subtly",
+   note:"-le перетворюється на -ly: subtle → subtly (не «subtlely»)."},
+  {base:"frantic", pos:"прикметник", ua:"панічно, несамовито",
+   sentence:"She searched ___ for her passport.",
+   answers:["frantically"], chain:"frantic → frantically",
+   note:"-ic завжди дає -ically."},
+  {base:"public", pos:"прикметник", ua:"публічно",
+   sentence:"The company ___ apologised for the mistake.",
+   answers:["publicly"], chain:"public → publicly",
+   note:"Єдиний важливий виняток із правила -ic → -ically."},
+  {base:"true", pos:"прикметник", ua:"щиро, справді",
+   sentence:"I am ___ sorry about what happened.",
+   answers:["truly"], chain:"true → truly",
+   note:"-ue втрачає e: true → truly."},
+  {base:"whole", pos:"прикметник", ua:"повністю, цілком",
+   sentence:"I ___ agree with your point.",
+   answers:["wholly"], chain:"whole → wholly",
+   note:"whole → wholly: e зникає, l подвоюється."},
+  {base:"humble", pos:"прикметник", ua:"скромно",
+   sentence:"He ___ accepted the award and thanked his team.",
+   answers:["humbly"], chain:"humble → humbly",
+   note:"Знову -le → -ly."},
+  {base:"clumsy", pos:"прикметник", ua:"незграбно",
+   sentence:"He ___ knocked over a glass of water.",
+   answers:["clumsily"], chain:"clumsy → clumsily",
+   note:"-y після приголосної стає -ily."},
+  {base:"extraordinary", pos:"прикметник", ua:"надзвичайно",
+   sentence:"The final task was ___ difficult.",
+   answers:["extraordinarily"], chain:"extraordinary → extraordinarily",
+   note:"Довге, але правило те саме: -y → -ily."},
+  {base:"vehement", pos:"прикметник", ua:"рішуче, палко",
+   sentence:"She ___ denied the accusation.",
+   answers:["vehemently"], chain:"vehement → vehemently",
+   note:"Просто + ly."},
+  {base:"meticulous", pos:"прикметник", ua:"дуже ретельно",
+   sentence:"Every clause was ___ checked by the lawyers.",
+   answers:["meticulously"], chain:"meticulous → meticulously",
+   note:"Просто + ly."},
+  {base:"unanimous", pos:"прикметник", ua:"одностайно",
+   sentence:"The board ___ approved the new plan.",
+   answers:["unanimously"], chain:"unanimous → unanimously",
+   note:"Просто + ly."},
+  {base:"envy", pos:"іменник", ua:"заздрісно",
+   sentence:"He looked at her new car ___.",
+   answers:["enviously"], chain:"envy → envious → enviously",
+   note:"Через прикметник на -ous."},
+  {base:"instinct", pos:"іменник", ua:"інстинктивно",
+   sentence:"When the alarm went off, I ___ stepped back.",
+   answers:["instinctively"], chain:"instinct → instinctive → instinctively",
+   note:"Через прикметник на -ive."},
+  {base:"good", pos:"прикметник", ua:"добре, вміло",
+   sentence:"She handled the whole crisis very ___.",
+   answers:["well"], chain:"good → well",
+   note:"Неправильна форма: жодного -ly, повністю інше слово."}
+];
+
+/* --- Етап 2: позиція --- */
+var PLACE = [
+  {adv:"patiently", parts:["She","explained","the instructions"],
+   accept:[1,3], best:3,
+   why:"Manner-прислівник іде після додатка. Перед дієсловом («She patiently explained…») теж можливо.",
+   reject:{2:"Ніколи не став прислівник між дієсловом і додатком.",0:"На початку manner-прислівник звучить неприродно."}},
+  {adv:"never", parts:["He","has","complained","about the noise"],
+   accept:[2], best:2,
+   why:"Після допоміжного дієслова: He has never complained.",
+   reject:{1:"Перед has — ні. Прислівник частоти йде після допоміжного.",3:"Тут він розриває фразу з дієсловом."}},
+  {adv:"always", parts:["They","are","late","for meetings"],
+   accept:[2], best:2,
+   why:"Після дієслова be: They are always late.",
+   reject:{1:"З дієсловом be прислівник іде після нього, а не перед."}},
+  {adv:"yesterday", parts:["I","finished","the report"],
+   accept:[0,3], best:3,
+   why:"Час — у кінці речення (або на початку, якщо хочеш його підкреслити).",
+   reject:{2:"Між дієсловом і додатком — ні."}},
+  {adv:"extremely", parts:["The task","was","difficult"],
+   accept:[2], best:2,
+   why:"Degree-прислівник стоїть прямо перед прикметником: extremely difficult.",
+   reject:{3:"Після прикметника він не працює."}},
+  {adv:"fluently", parts:["She","speaks","Italian"],
+   accept:[3], best:3,
+   why:"Тільки після додатка: She speaks Italian fluently.",
+   reject:{2:"Класична помилка: «speaks fluently Italian». Дієслово й додаток не розривають."}},
+  {adv:"rarely", parts:["We","eat","out","in winter"],
+   accept:[1], best:1,
+   why:"Прислівник частоти — перед смисловим дієсловом: We rarely eat out.",
+   reject:{2:"Це розриває фразовий вираз eat out."}},
+  {adv:"probably", parts:["He","was","driving","too fast"],
+   accept:[2], best:2,
+   why:"Після was: He was probably driving too fast.",
+   reject:{1:"Перед was ставимо тільки в коротких відповідях («He probably was»)."}},
+  {adv:"Apparently", parts:["he","forgot","my name"],
+   accept:[0,1], best:0,
+   why:"Коментар до всього речення — на початку з комою: Apparently, he forgot my name.",
+   reject:{3:"У кінці такий прислівник звучить як питання, а не коментар."}}
+];
+
+/* --- Етап 3: пастки --- */
+var TRAPS = [
+  {sentence:"I ___ know anything about this project.", options:["hard","hardly"], answer:"hardly",
+   why:"hardly = майже не. «hard» тут означало б «важко знаю», що безглуздо."},
+  {sentence:"She works ___ to support her family.", options:["hard","hardly"], answer:"hard",
+   why:"work hard = важко/багато працювати. work hardly означало б «майже не працює»."},
+  {sentence:"Have you seen him ___?", options:["late","lately"], answer:"lately",
+   why:"lately = останнім часом (часто з Present Perfect)."},
+  {sentence:"The bottle was ___ empty when I found it.", options:["near","nearly"], answer:"nearly",
+   why:"nearly = майже. near — про відстань."},
+  {sentence:"She is ___ respected in her field.", options:["high","highly"], answer:"highly",
+   why:"highly = дуже (з думками, оцінками). high — про фізичну висоту."},
+  {sentence:"The plane flew ___ above the clouds.", options:["high","highly"], answer:"high",
+   why:"Тут ідеться про справжню висоту, тому форма без -ly."},
+  {sentence:"I was ___ moved by his speech.", options:["deep","deeply"], answer:"deeply",
+   why:"deeply — про емоції. deep — про фізичну глибину (dig deep)."},
+  {sentence:"The doctor will call you back ___.", options:["short","shortly"], answer:"shortly",
+   why:"shortly = незабаром."},
+  {sentence:"He can ___ afford the rent this month.", options:["bare","barely"], answer:"barely",
+   why:"barely = ледве. bare — прикметник «голий»."},
+  {sentence:"The students here are ___ from Poland and Turkey.", options:["most","mostly"], answer:"mostly",
+   why:"mostly = переважно."},
+  {sentence:"This soup smells ___.", options:["good","well"], answer:"good",
+   why:"Після дієслів відчуття (smell, taste, look, sound) — прикметник."},
+  {sentence:"She plays the guitar surprisingly ___.", options:["good","well"], answer:"well",
+   why:"Звичайна дія — потрібен прислівник well."},
+  {sentence:"He speaks Ukrainian ___ than I expected.", options:["fluent","more fluently"], answer:"more fluently",
+   why:"Прислівники на -ly утворюють ступінь порівняння через more."}
+];
+
+/* --- Етап 4: конструктор --- */
+var BUILD = [
+  {tiles:["She","answered","the questions","confidently"],
+   accept:["she answered the questions confidently","she confidently answered the questions"],
+   why:"Manner-прислівник іде після додатка (або перед дієсловом)."},
+  {tiles:["He","has","been","unusually","quiet"],
+   accept:["he has been unusually quiet"],
+   why:"unusually описує прикметник quiet, тому стоїть прямо перед ним."},
+  {tiles:["I","have","never","seen","anything like it"],
+   accept:["i have never seen anything like it"],
+   why:"never — після допоміжного have."},
+  {tiles:["Unfortunately","the meeting","was","postponed","again"],
+   accept:["unfortunately the meeting was postponed again"],
+   why:"Коментар до речення — на початку."},
+  {tiles:["They","rarely","speak","to each other","these days"],
+   accept:["they rarely speak to each other these days"],
+   why:"Частота — перед смисловим дієсловом, час — у кінці."},
+  {tiles:["The new engine","works","surprisingly","well"],
+   accept:["the new engine works surprisingly well"],
+   why:"surprisingly підсилює інший прислівник — well."},
+  {tiles:["We","almost","missed","the last train"],
+   accept:["we almost missed the last train"],
+   why:"almost стоїть перед дієсловом, яке описує."},
+  {tiles:["He","politely","refused","the offer"],
+   accept:["he politely refused the offer","he refused the offer politely"],
+   why:"Обидва варіанти правильні; між refused і the offer — ні."}
+];
+
+/* --- Етап 5: фінал --- */
+var FINAL = [
+  {sentence:"The guard watched us ___. (suspicion)", answers:["suspiciously"],
+   why:"suspicion → suspicious → suspiciously."},
+  {sentence:"She ___ turned down the promotion. (reluctance)", answers:["reluctantly"],
+   why:"reluctance → reluctant → reluctantly."},
+  {sentence:"The two versions are ___ identical. (virtual)", answers:["virtually"],
+   why:"virtually = практично, майже."},
+  {sentence:"He ___ ignored every warning we gave him. (deliberate)", answers:["deliberately"],
+   why:"deliberate → deliberately: свідомо, навмисно."},
+  {sentence:"The system will ___ fail if we don't fix it. (inevitable)", answers:["inevitably"],
+   why:"-le → -ly: inevitably."},
+  {sentence:"They accepted the deal ___. (grudge)", answers:["grudgingly"],
+   why:"grudge → grudging → grudgingly."},
+  {sentence:"The room was ___ decorated for the party. (taste)", answers:["tastefully"],
+   why:"taste → tasteful → tastefully (зі смаком)."},
+  {sentence:"She ___ described what she had seen. (vivid)", answers:["vividly"],
+   why:"vivid → vividly: яскраво, у деталях."}
+];
+
+var STAGES = [
+  {id:"forge", name:"Кузня", sub:"Зроби прислівник зі складного слова", type:"type", data:FORGE},
+  {id:"place", name:"Місце в реченні", sub:"Постав прислівник у правильну позицію", type:"slot", data:PLACE},
+  {id:"traps", name:"Пастки", sub:"hard чи hardly, late чи lately", type:"mcq", data:TRAPS},
+  {id:"build", name:"Конструктор", sub:"Збери речення зі слів", type:"build", data:BUILD},
+  {id:"final", name:"Фінал", sub:"Усе разом + власні речення", type:"type2", data:FINAL}
+];
+
+/* =====================================================================
+   2. СТАН І ЗБЕРЕЖЕННЯ
+   ===================================================================== */
+
+var KEY = "adverbworks_v1";
+var state = null;
+
+function freshState(){
+  var st = {score:0, stages:{}, rulesSeen:false, ruleIdx:0, essay:"", essayDone:false, screen:"intro", active:null};
+  for(var i=0;i<STAGES.length;i++){
+    st.stages[STAGES[i].id] = {i:0, right:0, wrong:[], done:false, queue:null};
+  }
+  return st;
+}
+
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ /* приватний режим — гра просто працює без збереження */ }
+}
+
+function load(){
+  var raw = null;
+  try{ raw = localStorage.getItem(KEY); }catch(e){ raw = null; }
+  if(!raw) return false;
+  try{
+    var parsed = JSON.parse(raw);
+    if(!parsed || typeof parsed !== "object" || !parsed.stages) return false;
+    var base = freshState();
+    base.score = typeof parsed.score === "number" ? parsed.score : 0;
+    base.rulesSeen = !!parsed.rulesSeen;
+    base.ruleIdx = typeof parsed.ruleIdx === "number" ? parsed.ruleIdx : 0;
+    base.essay = typeof parsed.essay === "string" ? parsed.essay : "";
+    base.essayDone = !!parsed.essayDone;
+    base.screen = parsed.screen || "intro";
+    base.active = parsed.active || null;
+    for(var k in base.stages){
+      if(parsed.stages[k]){
+        var s = parsed.stages[k], b = base.stages[k];
+        b.i = typeof s.i === "number" ? s.i : 0;
+        b.right = typeof s.right === "number" ? s.right : 0;
+        b.wrong = Array.isArray(s.wrong) ? s.wrong : [];
+        b.done = !!s.done;
+        b.queue = Array.isArray(s.queue) ? s.queue : null;
+      }
+    }
+    state = base;
+    return true;
+  }catch(e){ return false; }
+}
+
+function resetAll(){
+  state = freshState();
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  save();
+  renderHub();
+  show("hub");
+  toast("Прогрес очищено");
+}
+
+/* =====================================================================
+   3. ДОПОМІЖНЕ
+   ===================================================================== */
+
+function $(id){ return document.getElementById(id); }
+
+function el(tag, cls, text){
+  var n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(text !== undefined && text !== null) n.textContent = text;
+  return n;
+}
+
+function norm(s){
+  return String(s).toLowerCase()
+    .replace(/[.,!?;:"“”'’]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+var toastTimer = null;
+function toast(msg){
+  var t = $("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+}
+
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-GB";
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function totalItems(){
+  var n = 0;
+  for(var i=0;i<STAGES.length;i++) n += STAGES[i].data.length;
+  return n + 1; /* + фінальне письмо */
+}
+
+function doneItems(){
+  var n = 0;
+  for(var i=0;i<STAGES.length;i++){
+    var s = state.stages[STAGES[i].id];
+    var len = STAGES[i].data.length;
+    if(s.done || (s.queue && s.queue.length)) n += len;
+    else n += Math.min(s.i, len);
+  }
+  if(state.essayDone) n += 1;
+  return n;
+}
+
+function updateHeader(){
+  $("scoreBox").textContent = state.score + " балів";
+  var pct = Math.round(doneItems() / totalItems() * 100);
+  $("rulerFill").style.width = pct + "%";
+}
+
+function buildTicks(){
+  var box = $("rulerTicks");
+  box.innerHTML = "";
+  for(var i=0;i<20;i++) box.appendChild(el("i"));
+}
+
+function show(name){
+  var ids = ["intro","rules","hub","task","result"];
+  for(var i=0;i<ids.length;i++){
+    $("scr-"+ids[i]).classList.toggle("on", ids[i]===name);
+  }
+  state.screen = name;
+  window.scrollTo(0,0);
+  updateHeader();
+  save();
+}
+
+/* =====================================================================
+   4. ПРАВИЛА
+   ===================================================================== */
+
+function renderRules(navId, bodyId, idx, onPick){
+  var nav = $(navId), body = $(bodyId);
+  nav.innerHTML = "";
+  for(var i=0;i<RULES.length;i++){
+    (function(i){
+      var b = el("button", i===idx ? "active" : "", (i+1) + ". " + RULES[i].title);
+      b.addEventListener("click", function(){ onPick(i); });
+      nav.appendChild(b);
+    })(i);
+  }
+  body.innerHTML = "<h2>" + RULES[idx].title + "</h2>" + RULES[idx].html;
+}
+
+function showRule(i){
+  if(i < 0) i = 0;
+  if(i > RULES.length-1) i = RULES.length-1;
+  state.ruleIdx = i;
+  renderRules("ruleNav","ruleBody",i,showRule);
+  $("rulePrev").disabled = (i===0);
+  var last = (i === RULES.length-1);
+  $("ruleNext").style.display = last ? "none" : "inline-block";
+  $("rulesDone").style.display = last ? "inline-block" : "none";
+  if(last) state.rulesSeen = true;
+  save();
+}
+
+var drawerIdx = 0;
+function showDrawerRule(i){
+  drawerIdx = i;
+  renderRules("dRuleNav","dRuleBody",i,showDrawerRule);
+}
+
+/* =====================================================================
+   5. МАПА
+   ===================================================================== */
+
+function renderHub(){
+  var box = $("hubList");
+  box.innerHTML = "";
+  for(var i=0;i<STAGES.length;i++){
+    (function(i){
+      var stg = STAGES[i], s = state.stages[stg.id];
+      var card = el("button","stage-card" + (s.done ? " done" : ""));
+      var num = el("div","num", s.done ? "✓" : String(i+1));
+      var t = el("div","t");
+      var b = el("b", stg.name);
+      var sm = el("small", stg.sub);
+      t.appendChild(b); t.appendChild(sm);
+      var label;
+      if(s.done) label = s.right + "/" + stg.data.length;
+      else if(s.queue && s.queue.length) label = "повторення";
+      else if(s.i > 0) label = "далі " + (s.i+1) + "/" + stg.data.length;
+      else label = String(stg.data.length) + " завдань";
+      var st = el("div","st", label);
+      card.appendChild(num); card.appendChild(t); card.appendChild(st);
+      card.addEventListener("click", function(){ startStage(stg.id); });
+      box.appendChild(card);
+    })(i);
+  }
+  var d = 0;
+  for(var j=0;j<STAGES.length;j++) if(state.stages[STAGES[j].id].done) d++;
+  $("hubStats").textContent = "Пройдено етапів: " + d + " з " + STAGES.length +
+    ". Балів: " + state.score + ". Виконано завдань: " + doneItems() + " з " + totalItems() + ".";
+  updateHeader();
+}
+
+/* =====================================================================
+   6. РУШІЙ ЗАВДАНЬ
+   ===================================================================== */
+
+var cur = { stage:null, item:null, index:0, answered:false, picked:null, order:[], mode:"main" };
+
+function stageById(id){
+  for(var i=0;i<STAGES.length;i++) if(STAGES[i].id===id) return STAGES[i];
+  return null;
+}
+
+function currentQueue(stg){
+  var s = state.stages[stg.id];
+  if(s.queue && s.queue.length) return s.queue;
+  var q = [];
+  for(var i=0;i<stg.data.length;i++) q.push(i);
+  return q;
+}
+
+function startStage(id){
+  var stg = stageById(id);
+  if(!stg) return;
+  var s = state.stages[id];
+  if(s.done){ s.i = 0; s.right = 0; s.wrong = []; s.done = false; s.queue = null; }
+  cur.stage = stg;
+  cur.mode = "main";
+  state.active = id;
+  save();
+  renderTask();
+  show("task");
+}
+
+function renderTask(){
+  var stg = cur.stage;
+  var s = state.stages[stg.id];
+  var queue = currentQueue(stg);
+
+  if(s.i >= queue.length){ finishStage(); return; }
+
+  /* фінальне письмове завдання після останнього пункту етапу "final" */
+  cur.index = queue[s.i];
+  cur.item = stg.data[cur.index];
+  cur.answered = false;
+  cur.picked = null;
+  cur.order = [];
+
+  $("taskStage").textContent = stg.name + " · " + stg.sub;
+  $("taskCount").textContent = (s.i+1) + " / " + queue.length;
+  $("fb").className = "fb";
+  $("fb").innerHTML = "";
+  $("checkBtn").style.display = "inline-block";
+  $("checkBtn").disabled = false;
+  $("checkBtn").onclick = onCheck;
+  $("nextBtn").onclick = onNext;
+  $("nextBtn").style.display = "none";
+
+  var body = $("taskBody");
+  body.innerHTML = "";
+
+  if(stg.type === "type") renderType(body, cur.item);
+  else if(stg.type === "slot") renderSlot(body, cur.item);
+  else if(stg.type === "mcq") renderMcq(body, cur.item);
+  else if(stg.type === "build") renderBuild(body, cur.item);
+  else if(stg.type === "type2") renderType2(body, cur.item);
+
+  updateHeader();
+  save();
+}
+
+/* --- тип 1: вписати прислівник від слова --- */
+function renderType(box, it){
+  box.appendChild(el("div","prompt","Зроби прислівник із цього слова і встав у речення."));
+
+  var t = el("div","target");
+  var w = el("div","word", it.base);
+  var p = el("div","pos", it.pos);
+  var sp = el("button","speak","🔊");
+  sp.type = "button";
+  sp.setAttribute("aria-label","Прослухати слово");
+  sp.addEventListener("click", function(){ speak(it.base); });
+  var ua = el("div","ua","значення прислівника: " + it.ua);
+  t.appendChild(w); t.appendChild(p); t.appendChild(sp); t.appendChild(ua);
+  box.appendChild(t);
+
+  var sent = el("div","sent");
+  var parts = it.sentence.split("___");
+  sent.appendChild(document.createTextNode(parts[0]));
+  sent.appendChild(el("span","gap"," "));
+  sent.appendChild(document.createTextNode(parts[1] || ""));
+  box.appendChild(sent);
+
+  var inp = document.createElement("input");
+  inp.type = "text";
+  inp.id = "answerInput";
+  inp.autocomplete = "off";
+  inp.autocapitalize = "off";
+  inp.spellcheck = false;
+  inp.placeholder = "пиши тут";
+  inp.addEventListener("keydown", function(e){ if(e.key === "Enter") onCheck(); });
+  box.appendChild(inp);
+
+  var hb = el("button","hint-btn","Показати підказку");
+  hb.type = "button";
+  var hint = el("div","hint-box", it.chain);
+  hb.addEventListener("click", function(){ hint.classList.add("on"); hb.style.display = "none"; });
+  box.appendChild(hb);
+  box.appendChild(hint);
+
+  setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 60);
+}
+
+/* --- тип 5: фінал, слово в дужках --- */
+function renderType2(box, it){
+  box.appendChild(el("div","prompt","Встав прислівник, утворений від слова в дужках."));
+  var sent = el("div","sent");
+  var text = it.sentence.replace("___","⬚");
+  sent.textContent = text;
+  box.appendChild(sent);
+
+  var inp = document.createElement("input");
+  inp.type = "text";
+  inp.id = "answerInput";
+  inp.autocomplete = "off";
+  inp.autocapitalize = "off";
+  inp.spellcheck = false;
+  inp.placeholder = "тільки одне слово";
+  inp.addEventListener("keydown", function(e){ if(e.key === "Enter") onCheck(); });
+  box.appendChild(inp);
+}
+
+/* --- тип 2: позиція в реченні --- */
+function renderSlot(box, it){
+  box.appendChild(el("div","prompt","Куди поставити цей прислівник? Натисни на потрібну клітинку."));
+
+  var t = el("div","target");
+  var w = el("div","word", it.adv);
+  t.appendChild(w);
+  box.appendChild(t);
+
+  var line = el("div","slotline");
+  for(var i=0;i<=it.parts.length;i++){
+    (function(i){
+      var b = el("button","slot","+");
+      b.type = "button";
+      b.setAttribute("data-slot", String(i));
+      b.setAttribute("aria-label","Позиція " + (i+1));
+      b.addEventListener("click", function(){
+        if(cur.answered) return;
+        cur.picked = i;
+        var all = line.querySelectorAll(".slot");
+        for(var k=0;k<all.length;k++){
+          all[k].classList.remove("filled");
+          all[k].textContent = "+";
+        }
+        b.classList.add("filled");
+        b.textContent = it.adv;
+      });
+      line.appendChild(b);
+    })(i);
+    if(i < it.parts.length){
+      line.appendChild(document.createTextNode(" " + it.parts[i] + " "));
+    }
+  }
+  box.appendChild(line);
+}
+
+/* --- тип 3: вибір --- */
+function renderMcq(box, it){
+  box.appendChild(el("div","prompt","Обери правильну форму."));
+  var sent = el("div","sent");
+  sent.textContent = it.sentence.replace("___","⬚");
+  box.appendChild(sent);
+
+  var opts = el("div","opts");
+  for(var i=0;i<it.options.length;i++){
+    (function(i){
+      var b = el("button","opt", it.options[i]);
+      b.type = "button";
+      b.setAttribute("data-opt", it.options[i]);
+      b.addEventListener("click", function(){
+        if(cur.answered) return;
+        cur.picked = it.options[i];
+        var all = opts.querySelectorAll(".opt");
+        for(var k=0;k<all.length;k++) all[k].style.borderColor = "";
+        b.style.borderColor = "var(--cobalt)";
+      });
+      opts.appendChild(b);
+    })(i);
+  }
+  box.appendChild(opts);
+}
+
+/* --- тип 4: конструктор --- */
+function renderBuild(box, it){
+  box.appendChild(el("div","prompt","Склади правильне речення. Натискай на слова; щоб прибрати — натисни на слово вгорі."));
+
+  var answer = el("div","answer-line");
+  answer.id = "answerLine";
+  box.appendChild(answer);
+
+  var tiles = el("div","tiles");
+  var shuffled = it.tiles.slice();
+  /* детермінований перемішувач: без випадковості, щоб порядок не був підказкою */
+  shuffled.sort(function(a,b){ return norm(a) < norm(b) ? -1 : 1; });
+
+  function redraw(){
+    answer.innerHTML = "";
+    for(var i=0;i<cur.order.length;i++){
+      (function(i){
+        var word = cur.order[i];
+        var b = el("button","tile in-answer", word);
+        b.type = "button";
+        b.addEventListener("click", function(){
+          if(cur.answered) return;
+          cur.order.splice(i,1);
+          redraw();
+        });
+        answer.appendChild(b);
+      })(i);
+    }
+    var all = tiles.querySelectorAll(".tile");
+    var counts = {};
+    for(var j=0;j<cur.order.length;j++) counts[cur.order[j]] = (counts[cur.order[j]]||0)+1;
+    var seen = {};
+    for(var k=0;k<all.length;k++){
+      var wtext = all[k].textContent;
+      seen[wtext] = (seen[wtext]||0)+1;
+      all[k].classList.toggle("used", (counts[wtext]||0) >= seen[wtext]);
+    }
+  }
+
+  for(var i=0;i<shuffled.length;i++){
+    (function(word){
+      var b = el("button","tile", word);
+      b.type = "button";
+      b.addEventListener("click", function(){
+        if(cur.answered) return;
+        cur.order.push(word);
+        redraw();
+      });
+      tiles.appendChild(b);
+    })(shuffled[i]);
+  }
+  box.appendChild(tiles);
+  redraw();
+}
+
+/* =====================================================================
+   7. ПЕРЕВІРКА
+   ===================================================================== */
+
+function feedback(good, title, html){
+  var fb = $("fb");
+  fb.className = "fb on " + (good ? "good" : "bad");
+  fb.innerHTML = "<div class='verdict'>" + title + "</div>" + html;
+}
+
+function onCheck(){
+  if(cur.answered) return;
+  var stg = cur.stage, it = cur.item, s = state.stages[stg.id];
+  var good = false, html = "";
+
+  if(stg.type === "type" || stg.type === "type2"){
+    var inp = $("answerInput");
+    if(!inp) return;
+    var val = norm(inp.value);
+    if(!val){ toast("Спочатку впиши відповідь"); return; }
+    good = it.answers.indexOf(val) !== -1;
+    var right = it.answers[0];
+    if(good){
+      html = "<p style='margin:0'>" + (it.chain ? "<code>" + it.chain + "</code> " : "") + (it.note || it.why || "") + "</p>";
+    }else{
+      html = "<p style='margin:0 0 6px'>Правильно: <code>" + right + "</code></p><p style='margin:0'>" +
+             (it.chain ? "<code>" + it.chain + "</code> " : "") + (it.note || it.why || "") + "</p>";
+    }
+    var sentence = (stg.type === "type") ? it.sentence.replace("___", right) : it.sentence.replace("___", right).replace(/\s*\([a-z]+\)/,"");
+    html += "<p style='margin:8px 0 0'><span class='en'>" + sentence + "</span></p>";
+  }
+  else if(stg.type === "slot"){
+    if(cur.picked === null){ toast("Обери клітинку"); return; }
+    good = it.accept.indexOf(cur.picked) !== -1;
+    var full = [];
+    for(var i=0;i<=it.parts.length;i++){
+      if(i === it.best) full.push(it.adv);
+      if(i < it.parts.length) full.push(it.parts[i]);
+    }
+    var sentTxt = full.join(" ");
+    sentTxt = sentTxt.charAt(0).toUpperCase() + sentTxt.slice(1) + ".";
+    if(it.best === 0) sentTxt = sentTxt.replace(it.adv + " ", it.adv + ", ");
+    html = "<p style='margin:0 0 6px'><span class='en'>" + sentTxt + "</span></p>";
+    if(!good && it.reject && it.reject[cur.picked]){
+      html += "<p style='margin:0 0 6px'>" + it.reject[cur.picked] + "</p>";
+    }
+    html += "<p style='margin:0'>" + it.why + "</p>";
+    /* підсвітити клітинки */
+    var slots = $("taskBody").querySelectorAll(".slot");
+    for(var j=0;j<slots.length;j++){
+      var idx = parseInt(slots[j].getAttribute("data-slot"),10);
+      if(it.accept.indexOf(idx) !== -1) slots[j].classList.add("ok");
+      else if(idx === cur.picked) slots[j].classList.add("no");
+      slots[j].disabled = true;
+    }
+  }
+  else if(stg.type === "mcq"){
+    if(cur.picked === null){ toast("Обери варіант"); return; }
+    good = (cur.picked === it.answer);
+    var btns = $("taskBody").querySelectorAll(".opt");
+    for(var k=0;k<btns.length;k++){
+      var v = btns[k].getAttribute("data-opt");
+      btns[k].style.borderColor = "";
+      if(v === it.answer) btns[k].classList.add("pick-ok");
+      else if(v === cur.picked) btns[k].classList.add("pick-no");
+      btns[k].disabled = true;
+    }
+    html = "<p style='margin:0 0 6px'><span class='en'>" + it.sentence.replace("___", it.answer) + "</span></p><p style='margin:0'>" + it.why + "</p>";
+    speak(it.sentence.replace("___", it.answer));
+  }
+  else if(stg.type === "build"){
+    if(!cur.order.length){ toast("Збери речення"); return; }
+    var made = norm(cur.order.join(" "));
+    good = it.accept.indexOf(made) !== -1;
+    var modelTxt = it.accept[0].charAt(0).toUpperCase() + it.accept[0].slice(1) + ".";
+    html = "<p style='margin:0 0 6px'><span class='en'>" + modelTxt + "</span></p><p style='margin:0'>" + it.why + "</p>";
+    if(it.accept.length > 1){
+      html += "<p style='margin:6px 0 0' class='ua-note'>Також приймається: " + it.accept.slice(1).join(" / ") + "</p>";
+    }
+    var tl = $("taskBody").querySelectorAll(".tile");
+    for(var m=0;m<tl.length;m++) tl[m].disabled = true;
+  }
+
+  cur.answered = true;
+  if(good){
+    s.right += 1;
+    state.score += 10;
+    feedback(true,"Правильно", html);
+  }else{
+    if(s.wrong.indexOf(cur.index) === -1) s.wrong.push(cur.index);
+    feedback(false,"Не зовсім", html);
+  }
+
+  $("checkBtn").style.display = "none";
+  $("nextBtn").style.display = "inline-block";
+  $("nextBtn").focus();
+  updateHeader();
+  save();
+}
+
+function onNext(){
+  var s = state.stages[cur.stage.id];
+  s.i += 1;
+  save();
+  renderTask();
+}
+
+/* =====================================================================
+   8. РЕЗУЛЬТАТИ ЕТАПУ
+   ===================================================================== */
+
+function finishStage(){
+  var stg = cur.stage, s = state.stages[stg.id];
+  var queue = currentQueue(stg);
+
+  if(stg.id === "final" && !state.essayDone){
+    renderEssay();
+    return;
+  }
+
+  s.done = true;
+  s.queue = null;
+  save();
+
+  $("resScore").textContent = s.right + " / " + queue.length;
+  var pct = queue.length ? s.right/queue.length : 1;
+  var msg;
+  if(pct === 1) msg = "Етап «" + stg.name + "» пройдено без жодної помилки.";
+  else if(pct >= 0.7) msg = "Етап «" + stg.name + "» пройдено. Кілька місць варто повторити.";
+  else msg = "Етап «" + stg.name + "» пройдено, але половина правил ще не осіла. Повтори промахи — це швидко.";
+  $("resText").textContent = msg;
+
+  var box = $("resMiss");
+  box.innerHTML = "";
+  if(s.wrong.length){
+    box.appendChild(el("h3","","Що не вийшло"));
+    for(var i=0;i<s.wrong.length;i++){
+      var it = stg.data[s.wrong[i]];
+      var d = el("div","miss");
+      if(stg.type === "type") d.innerHTML = "<b>" + it.base + " → " + it.answers[0] + "</b> — " + (it.note||"");
+      else if(stg.type === "type2") d.innerHTML = "<b>" + it.answers[0] + "</b> — " + it.why;
+      else if(stg.type === "slot") d.innerHTML = "<b>" + it.adv + "</b> — " + it.why;
+      else if(stg.type === "mcq") d.innerHTML = "<b>" + it.answer + "</b> — " + it.why;
+      else d.innerHTML = "<b>" + it.accept[0] + "</b> — " + it.why;
+      box.appendChild(d);
+    }
+    $("retryMiss").style.display = "inline-block";
+  }else{
+    $("retryMiss").style.display = "none";
+  }
+  show("result");
+  renderHub();
+}
+
+function retryMistakes(){
+  var stg = cur.stage, s = state.stages[stg.id];
+  if(!s.wrong.length) return;
+  s.queue = s.wrong.slice();
+  s.wrong = [];
+  s.i = 0;
+  s.right = 0;
+  s.done = false;
+  cur.mode = "retry";
+  save();
+  renderTask();
+  show("task");
+}
+
+/* =====================================================================
+   9. ФІНАЛЬНЕ ПИСЬМО
+   ===================================================================== */
+
+var ADV_STOP = ["only","family","reply","ugly","silly","lonely","friendly","lovely","likely","supply","apply","july","italy","rely","fly","july"];
+
+function findAdverbs(text){
+  var words = String(text).toLowerCase().replace(/[^a-z\s']/g," ").split(/\s+/);
+  var found = [];
+  for(var i=0;i<words.length;i++){
+    var w = words[i];
+    if(w.length > 4 && w.slice(-2) === "ly" && ADV_STOP.indexOf(w) === -1 && found.indexOf(w) === -1){
+      found.push(w);
+    }
+    if((w === "well" || w === "hard" || w === "fast" || w === "late") && found.indexOf(w) === -1){
+      found.push(w);
+    }
+  }
+  return found;
+}
+
+function renderEssay(){
+  $("taskStage").textContent = "Фінал · Власні речення";
+  $("taskCount").textContent = "останнє завдання";
+  $("fb").className = "fb";
+  $("fb").innerHTML = "";
+  $("checkBtn").style.display = "inline-block";
+  $("checkBtn").disabled = false;
+  $("nextBtn").style.display = "none";
+
+  var box = $("taskBody");
+  box.innerHTML = "";
+  box.appendChild(el("div","prompt","Напиши 3–4 речення про свій звичайний робочий день. Використай щонайменше три різні прислівники — і хоча б один із них має описувати, ЯК ти щось робиш."));
+
+  var ta = document.createElement("textarea");
+  ta.id = "essayBox";
+  ta.placeholder = "I usually start work at 9... — пиши англійською";
+  ta.value = state.essay || "";
+  ta.addEventListener("input", function(){ state.essay = ta.value; save(); });
+  box.appendChild(ta);
+
+  var tip = el("div","hint-box on","Ідеї: reluctantly, meticulously, rarely, unfortunately, extremely, surprisingly well, hardly ever.");
+  box.appendChild(tip);
+
+  cur.answered = false;
+  cur.mode = "essay";
+
+  $("checkBtn").onclick = function(){
+    var text = $("essayBox").value;
+    var found = findAdverbs(text);
+    var wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+    if(wordCount < 12){
+      toast("Напиши трохи більше — хоча б три речення");
+      return;
+    }
+    state.essay = text;
+    state.essayDone = true;
+    state.score += 30;
+    cur.answered = true;
+    var listHtml = found.length ? "<code>" + found.join("</code> <code>") + "</code>" : "—";
+    if(found.length >= 3){
+      feedback(true,"Готово", "<p style='margin:0 0 6px'>Знайдені прислівники: " + listHtml + "</p><p style='margin:0'>Покажи цей текст викладачці — вона перевірить порядок слів і значення.</p>");
+    }else{
+      feedback(false,"Прислівників замало", "<p style='margin:0 0 6px'>Знайдено: " + listHtml + "</p><p style='margin:0'>Додай ще — і звертай увагу на місце: manner-прислівник іде після додатка, частота — перед смисловим дієсловом. Текст збережено, можеш доповнити.</p>");
+    }
+    $("checkBtn").style.display = "none";
+    $("nextBtn").style.display = "inline-block";
+    save();
+    updateHeader();
+  };
+
+  $("nextBtn").onclick = function(){
+    $("checkBtn").onclick = onCheck;
+    $("nextBtn").onclick = onNext;
+    cur.mode = "main";
+    finishStage();
+  };
+
+  show("task");
+  save();
+}
+
+/* =====================================================================
+   10. ЗАПУСК
+   ===================================================================== */
+
+function bind(){
+  $("toRules").addEventListener("click", function(){ showRule(0); show("rules"); });
+  $("skipRules").addEventListener("click", function(){ renderHub(); show("hub"); });
+  $("rulePrev").addEventListener("click", function(){ showRule(state.ruleIdx-1); window.scrollTo(0,0); });
+  $("ruleNext").addEventListener("click", function(){ showRule(state.ruleIdx+1); window.scrollTo(0,0); });
+  $("rulesDone").addEventListener("click", function(){ renderHub(); show("hub"); });
+
+  $("homeBtn").addEventListener("click", function(){ renderHub(); show("hub"); });
+  $("rulesBtn").addEventListener("click", function(){
+    showDrawerRule(drawerIdx);
+    $("drawer").classList.add("on");
+  });
+  $("drawerClose").addEventListener("click", function(){ $("drawer").classList.remove("on"); });
+  $("drawer").addEventListener("click", function(e){
+    if(e.target === $("drawer")) $("drawer").classList.remove("on");
+  });
+
+  $("checkBtn").onclick = onCheck;
+  $("nextBtn").onclick = onNext;
+  $("quitBtn").addEventListener("click", function(){ renderHub(); show("hub"); });
+  $("resHome").addEventListener("click", function(){ renderHub(); show("hub"); });
+  $("retryMiss").addEventListener("click", retryMistakes);
+  $("resetBtn").addEventListener("click", function(){
+    if(confirm("Точно почати спочатку? Увесь прогрес буде стерто.")) resetAll();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") $("drawer").classList.remove("on");
+  });
+  window.addEventListener("beforeunload", save);
+}
+
+function boot(){
+  buildTicks();
+  var restored = load();
+  if(!restored) state = freshState();
+  bind();
+  showDrawerRule(0);
+  renderHub();
+
+  if(restored && (state.score > 0 || doneItems() > 0 || state.rulesSeen)){
+    if(state.screen === "task" && state.active && stageById(state.active)){
+      cur.stage = stageById(state.active);
+      cur.mode = "main";
+      var s = state.stages[state.active];
+      if(state.active === "final" && s.i >= currentQueue(cur.stage).length && !state.essayDone){
+        renderEssay();
+      }else{
+        renderTask();
+        show("task");
+      }
+    }else if(state.screen === "rules"){
+      showRule(state.ruleIdx || 0);
+      show("rules");
+    }else{
+      show("hub");
+    }
+    toast("Прогрес відновлено");
+  }else{
+    show("intro");
+  }
+  updateHeader();
+}
+
+boot();
+</script>
+</body>
+</html>
